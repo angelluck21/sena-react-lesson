@@ -27,6 +27,7 @@ function Torneos() {
 
   const fetchVideoGames = () => {
     axios.get(import.meta.env.VITE_TORNEO_ENDPOINT + '/api/videojuegos').then((response) => {
+      console.log(response.data);
       setGames(response.data.data);
     }).catch(error => {
       console.log(error);
@@ -135,7 +136,7 @@ function Torneos() {
               <td className='px-6'>{tournament.nombre}</td>
               <td className='px-6'>{tournament.limite_equipos}</td>
               <td className='px-6'>{tournament.modalidad}</td>
-              <td className='px-6'>{tournament.videojuego.nombre}</td>
+              <td className='px-6'>{tournament.videojuego?.nombre}</td>
               <td className='px-6'colSpan={3}>
                 <button onClick={() => setModalEditInfo(tournament) } className='bg-blue-600 text-white rounded p-2 mr-2 my-2' data-modal-target="crud-modal" data-modal-toggle="crud-modal" type='button'> <LuPencil/></button>
                 <button className='bg-red-600 text-white rounded p-2 my-2' onClick={() => removeTournament(tournament.id)}> <LuTrash/></button>

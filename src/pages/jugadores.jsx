@@ -18,7 +18,7 @@ function Jugadores() {
 
   function obtenerjugadores() {
     axios.get("http://127.0.0.1:8000/api/jugadores")
-      .then((response) => {g
+      .then((response) => {
         console.log("Datos obtenidos:", response.data.jugadores);
         setjugadores(response.data.jugadores);
       })

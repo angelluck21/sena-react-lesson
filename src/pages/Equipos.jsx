@@ -1,25 +1,44 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Equipos = () => {
     const [formData, setFormData] = useState({
         teamName: "",
-        participants: "",
         leader: "",
         game: "",
+        participants: [], 
     });
     const [games, setGames] = useState([]);
+    const [players, setPlayers] = useState([]);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/api/allequipos") // Ajusta la URL según tu backend
-            .then(response => response.json())
-            .then(data => setGames(data))
-            .catch(error => console.error("Error al obtener juegos:", error));
-    }, []);
+    axios.get("http://127.0.0.1:8000/api/jugadores")
+        .then((response) => {
+            setPlayers(response.data.jugadores);
+        })
+        .catch((error) => {
+            console.error("Error al obtener jugadores:", error);
+        });
+}, []);
+    
+    
+
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
+        const { name, value } = e.target;
+        setFormData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    const handlePlayerSelection = (playerId) => {
+        setFormData((prevState) => {
+            const updatedParticipants = prevState.participants.includes(playerId)
+                ? prevState.participants.filter((id) => id !== playerId)
+                : [...prevState.participants, playerId];
+
+            return { ...prevState, participants: updatedParticipants };
         });
     };
 
@@ -46,18 +65,6 @@ const Equipos = () => {
                 </label>
 
                 <label className="block">
-                    <span className="text-gray-700">Cantidad de Participantes</span>
-                    <input
-                        type="number"
-                        name="participants"
-                        value={formData.participants}
-                        onChange={handleChange}
-                        required
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                    />
-                </label>
-
-                <label className="block">
                     <span className="text-gray-700">Líder Actual</span>
                     <input
                         type="text"
@@ -69,22 +76,22 @@ const Equipos = () => {
                     />
                 </label>
 
+            
+
                 <label className="block">
-                    <span className="text-gray-700">Juego a Jugar</span>
-                    <select
-                        name="game"
-                        value={formData.game}
-                        onChange={handleChange}
-                        required
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                    >
-                        <option value="" disabled>Selecciona un juego</option>
-                        {games.map(game => (
-                            <option key={game.id} value={game.name}>
-                                {game.name}
-                            </option>
+                    <span className="text-gray-700">Seleccionar Jugadores</span>
+                    <div className="mt-1 border border-gray-300 rounded-md p-2">
+                        {players.map((player) => (
+                            <label key={player.id} className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.participants.includes(player.id)}
+                                    onChange={() => handlePlayerSelection(player.id)}
+                                />
+                                {player.nombre}
+                            </label>
                         ))}
-                    </select>
+                    </div>
                 </label>
 
                 <button type="submit" className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
